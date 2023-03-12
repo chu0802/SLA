@@ -1,5 +1,5 @@
 # Source Label Adaptation
-The official Pytorch implementation of "Semi-Supervised Domain Adaptation with Source Label Adaptation" accepted by CVPR2023. Check more details of this work in our paper: [[Arxiv]](https://arxiv.org/abs/2302.02335).
+The official Pytorch implementation of "Semi-Supervised Domain Adaptation with Source Label Adaptation" accepted by CVPR 2023. Check more details of this work in our paper: [[Arxiv]](https://arxiv.org/abs/2302.02335).
 
 ## Python version & Packages
 
