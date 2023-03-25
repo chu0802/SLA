@@ -3,20 +3,37 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Function
+from evaluation import prediction
 from cdac_loss import advbce_unlabeled, sigmoid_rampup, BCE_softlabels
 
 def init_weights(m):
-    if isinstance(m, nn.Linear):
+    classname = m.__class__.__name__
+    if classname.find('Conv') != -1:
+        m.weight.data.normal_(0.0, 0.1)
+    elif classname.find('Linear') != -1:
         nn.init.xavier_normal_(m.weight)
-        if m.bias is not None:
-            nn.init.zeros_(m.bias)
+        nn.init.zeros_(m.bias)
+    elif classname.find('BatchNorm') != -1:
+        m.weight.data.normal_(1.0, 0.1)
+        m.bias.data.fill_(0)
 
 class ProtoClassifier(nn.Module):
-    def __init__(self, center):
+    def __init__(self, size):
         super(ProtoClassifier, self).__init__()
+        self.center = None
+        self.label = None
+        self.size = size
+    def init(self, model, t_loader):
+        t_pred, t_feat = prediction(t_loader, model)
+        label = t_pred.argmax(dim=1)
+        center = torch.nan_to_num(torch.vstack([t_feat[label == i].mean(dim=0) for i in range(self.size)]))
+        invalid_idx = center.sum(dim=1) == 0
+        if invalid_idx.any() and self.label is not None:
+            old_center = torch.vstack([t_feat[self.label == i].mean(dim=0) for i in range(self.size)])
+            center[invalid_idx] = old_center[invalid_idx]
+        else:
+            self.label = label
         self.center = center.requires_grad_(False)
-    def update_center(self, c, idx, p=0.99):
-        self.center[idx] = p * self.center[idx] + (1 - p) * c[idx]
     @torch.no_grad()
     def forward(self, x, T=1.0):
         dist = torch.cdist(x, self.center)
@@ -54,7 +71,7 @@ class ResModel(nn.Module):
         super(ResModel, self).__init__()
         self.f = ResBase(backbone=backbone, weights=models.__dict__[f'ResNet{backbone[6:]}_Weights'].DEFAULT if pre_trained else None)
         self.c = Classifier(self.f.last_dim, hidden_dim, output_dim, temp)
-        self.c.apply(init_weights)
+        init_weights(self.c)
 
         self.criterion = nn.CrossEntropyLoss(reduction='none')
         self.bce = BCE_softlabels()
@@ -62,10 +79,15 @@ class ResModel(nn.Module):
         return self.c(self.f(x), reverse)
 
     def get_params(self, lr):
-        return [
-            {'params': self.f.parameters(), 'base_lr': lr*0.1, 'lr': lr*0.1},
-            {'params': self.c.parameters(), 'base_lr': lr, 'lr': lr}
-        ]
+        params = []
+        for k, v in dict(self.f.named_parameters()).items():
+            if v.requires_grad:
+                if 'classifier' not in k:
+                    params += [{'params': [v], 'base_lr': lr*0.1, 'lr': lr*0.1}]
+                else:
+                    params += [{'params': [v], 'base_lr': lr, 'lr': lr}]
+        params += [{'params': self.c.parameters(), 'base_lr': lr, 'lr': lr}]
+        return params
     def get_features(self, x, reverse=False):
         return self.c.get_features(self.f(x), reverse=reverse)
     
@@ -74,7 +96,8 @@ class ResModel(nn.Module):
 
     def base_loss(self, x, y):
         return self.criterion(self.forward(x), y).mean()
-    
+    def feature_base_loss(self, f, y):
+        return self.criterion(self.get_predictions(f), y).mean()
     def lc_loss(self, f, y1, y2, alpha):
         out = self.get_predictions(f)
         log_softmax_out = F.log_softmax(out, dim=1)
@@ -82,8 +105,8 @@ class ResModel(nn.Module):
         soft_loss = -(y2 * log_softmax_out).sum(axis=1)
         return ((1 - alpha) * l_loss + alpha * soft_loss).mean()
 
-    def nl_loss(self, x, y, alpha, T):
-        out = self.forward(x)
+    def nl_loss(self, f, y, alpha, T):
+        out = self.get_predictions(f)
         y2 = F.softmax(out.detach() * T, dim=1)
         log_softmax_out = F.log_softmax(out, dim=1)
         l_loss = self.criterion(out, y)
@@ -96,13 +119,21 @@ class ResModel(nn.Module):
         return lamda * torch.mean(torch.sum(out * (torch.log(out + 1e-10)), dim=1))
     def cdac_loss(self, x, x1, x2, i):
         w_cons = 30 * sigmoid_rampup(i, 2000)
+        f = self.f(x)
+        f1 = self.f(x1)
+        f2 = self.f(x2)
 
-        f, f1, f2 = [self.f(i) for i in [x, x1, x2]]
-        prob, prob1 = [F.softmax(self.c(i, reverse=True), dim=1) for i in [f, f1]]
+        out = self.c(f, reverse=True)
+        out1 = self.c(f1, reverse=True)
+        
+        prob, prob1 = F.softmax(out, dim=1), F.softmax(out1, dim=1)
         aac_loss = advbce_unlabeled(target=None, f=f, prob=prob, prob1=prob1, bce=self.bce)
 
-        out, out1, out2 = [self.c(i) for i in [f, f1, f2]]
-        prob, prob1, prob2 = [F.softmax(i, dim=1) for i in [out, out1, out2]]
+        out = self.c(f)
+        out1 = self.c(f1)
+        out2 = self.c(f2)
+
+        prob, prob1, prob2 = F.softmax(out, dim=1), F.softmax(out1, dim=1), F.softmax(out2, dim=1)
         mp, pl = torch.max(prob.detach(), dim=1)
         mask = mp.ge(0.95).float()
 
