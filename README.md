@@ -40,4 +40,6 @@ python --method MME_LC --source 0 --target 1 --seed 1102 --num_iters 10000 --sho
 
 ## Acknowledgement
 
-This code is partially based on [MME](https://github.com/VisionLearningGroup/SSDA_MME), and [DeepDA](https://github.com/jindongwang/transferlearning/tree/master/code/DeepDA).
+This code is partially based on [MME](https://github.com/VisionLearningGroup/SSDA_MME), [CDAC](https://github.com/lijichang/CVPR2021-SSDA) and [DeepDA](https://github.com/jindongwang/transferlearning/tree/master/code/DeepDA).
+
+The backup url for OfficeHome is provided by [here](https://github.com/jindongwang/transferlearning/blob/master/data/dataset.md#office-home).
