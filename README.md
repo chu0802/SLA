@@ -49,6 +49,12 @@ The dataset is organized into directories, as shown below:
 
 ### Download and Preparation
 
+Before running the data preparation script, make sure to update the configuration file in `data_preparation/dataset.yaml` with the correct settings for your dataset. In particular, you will need to update the `dataset_dir` variable to point to the directory where your dataset is stored.
+
+```
+dataset_dir: /path/to/dataset
+```
+
 To download and prepare one of these datasets, run the following command:
 
 ```
