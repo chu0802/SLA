@@ -66,13 +66,15 @@ Replace <DATASET> with the name of the dataset you want to prepare (e.g. DomainN
 After running the data preparation script, you should be able to use the resulting data files in this repository.
 
 
-## Running
-
-Take MME + SLA on 3-shot A -> C Office-Home dataset as example:
+## Running the model
+    
+To run the main Python file, use the following command:
 
 ```
 python --method MME_LC --source 0 --target 1 --seed 1102 --num_iters 10000 --shot 3shot --alpha 0.3 --update_interval 500 --warmup 500 --T 0.6
 ```
+    
+This command runs the MME + SLA model on the 3-shot A -> C Office-Home dataset, with the specified hyperparameters. You can modify the command to run different experiments with different hyperparameters or on different datasets.
 
 ## Acknowledgement
 
