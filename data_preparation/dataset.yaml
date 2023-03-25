@@ -1,0 +1,23 @@
+dataset_dir: /tmp2/chu0802/data
+text_url: https://raw.githubusercontent.com/VisionLearningGroup/SSDA_MME/master/data/txt/
+dataset_cfg:
+    OfficeHome:
+        url: https://wjdcloud.blob.core.windows.net/dataset/OfficeHome.zip
+        domains:
+            - Art
+            - Clipart
+            - Product
+            - Real
+    DomainNet:
+        url: http://csr.bu.edu/ftp/visda/2019/multi-source
+        domains:
+            - clipart
+            - painting
+            - real
+            - sketch
+    Office31:
+        url: test
+        domains:
+            - amazon
+            - dslr
+            - webcam
