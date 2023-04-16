@@ -58,7 +58,8 @@ dataset_dir: /path/to/dataset
 To download and prepare one of these datasets, run the following command:
 
 ```
-python data_preparation/data_preparation.py --dataset <DATASET>
+cd data_preparation
+python data_preparation.py --dataset <DATASET>
 ```
 
 Replace <DATASET> with the name of the dataset you want to prepare (e.g. DomainNet, OfficeHome, or Office31). This script will download the dataset (if necessary) and extract the text data which specify the way to split training, validation, and test sets. The resulting data will be saved in the format described above.
