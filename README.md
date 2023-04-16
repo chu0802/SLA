@@ -55,7 +55,7 @@ Before running the data preparation script, make sure to update the configuratio
 dataset_dir: /path/to/dataset
 ```
 
-To download and prepare one of these datasets, run the following command:
+To download and prepare one of these datasets, run the following commands:
 
 ```
 cd data_preparation
