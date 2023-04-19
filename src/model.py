@@ -75,6 +75,7 @@ class ResModel(nn.Module):
 
         self.criterion = nn.CrossEntropyLoss(reduction='none')
         self.bce = BCE_softlabels()
+
     def forward(self, x, reverse=False):
         return self.c(self.f(x), reverse)
 
@@ -113,12 +114,12 @@ class ResModel(nn.Module):
         soft_loss = -(y2 * log_softmax_out).sum(dim=1)
         return ((1 - alpha) * l_loss + alpha * soft_loss).mean()
 
-    def mme_loss(self, x, lamda=0.1):
+    def mme_loss(self, _, x, lamda=0.1):
         out = self.forward(x, reverse=True)
         out = F.softmax(out, dim=1)
         return lamda * torch.mean(torch.sum(out * (torch.log(out + 1e-10)), dim=1))
-    def cdac_loss(self, x, x1, x2, i):
-        w_cons = 30 * sigmoid_rampup(i, 2000)
+    def cdac_loss(self, step, x, x1, x2):
+        w_cons = 30 * sigmoid_rampup(step, 2000)
         f = self.f(x)
         f1 = self.f(x1)
         f2 = self.f(x2)
