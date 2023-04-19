@@ -5,7 +5,7 @@ The official Pytorch implementation of "Semi-Supervised Domain Adaptation with S
 
 To ensure that the project runs smoothly, set up a dedicated Python environment with all the necessary packages installed. Use conda to create a new environment by running the following command:
 
-```
+```sh
 conda create --name <env_name> python=3.10.10 --file requirements.txt
 ```
 
@@ -54,13 +54,13 @@ The dataset is organized into directories, as shown below:
 
 Before running the data preparation script, make sure to update the configuration file in `data_preparation/dataset.yaml` with the correct settings for your dataset. In particular, you will need to update the `dataset_dir` variable to point to the directory where your dataset is stored.
 
-```
+```yaml
 dataset_dir: /path/to/dataset
 ```
 
 To download and prepare one of these datasets, run the following commands:
 
-```
+```sh
 cd data_preparation
 python data_preparation.py --dataset <DATASET>
 ```
@@ -74,7 +74,7 @@ After running the data preparation script, you should be able to use the resulti
     
 To run the main Python file, use the following command:
 
-```
+```sh
 python main.py --method MME_LC --source 0 --target 1 --seed 1102 --num_iters 10000 --shot 3shot --alpha 0.3 --update_interval 500 --warmup 500 --T 0.6
 ```
     
