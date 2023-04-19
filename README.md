@@ -11,6 +11,12 @@ conda create --name <env_name> python=3.10.10 --file requirements.txt
 
 Replace <env_name> with the desired name of your new environment. This command will create a new environment with Python version 3.10.10 and install all the required packages specified in the requirements.txt file.
 
+### Compatible PyTorch version
+
+The requirements file specifies PyTorch version 2.0. Emprically it has shown to speed up the training progress.
+
+However, the code does not use any PyTorch 2.0 features and should be compatible with older versions of PyTorch, such as version 1.12.0.
+
 ## Data Preparation
 
 ### Supported Datasets
