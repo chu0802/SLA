@@ -8,9 +8,10 @@ from randaugment import RandAugmentMC
 import numpy as np
 import random
 from PIL import Image
+from dataclasses import dataclass
 
-mean = [0.485, 0.456, 0.406]
-std = [0.229, 0.224, 0.225]
+MEAN = [0.485, 0.456, 0.406]
+STD = [0.229, 0.224, 0.225]
 
 TRANSFORM = {
     'train': transforms.Compose([
@@ -18,13 +19,13 @@ TRANSFORM = {
         transforms.RandomHorizontalFlip(),
         transforms.RandomCrop(224),
         transforms.ToTensor(),
-        transforms.Normalize(mean=mean,std=std)
+        transforms.Normalize(mean=MEAN,std=STD)
     ]),
     'test': transforms.Compose([
         transforms.Resize([224, 224]),
         transforms.CenterCrop(224),
         transforms.ToTensor(),
-        transforms.Normalize(mean=mean,std=std)
+        transforms.Normalize(mean=MEAN,std=STD)
     ]),
     'strong': transforms.Compose([
         transforms.Resize([256, 256]),
@@ -32,41 +33,10 @@ TRANSFORM = {
         transforms.RandomCrop(224),
         RandAugmentMC(n=2, m=10),
         transforms.ToTensor(),
-        transforms.Normalize(mean=mean,std=std)
+        transforms.Normalize(mean=MEAN,std=STD)
     ])
 }
 
-def get_all_loaders(args):
-    s_name, t_name = args.dataset['domains'][args.source], args.dataset['domains'][args.target]
-    root, text_root = Path(args.dataset['path']), Path(args.dataset['text_path'])
-    
-    s_list_file = text_root / s_name / args.dataset['list']['all']
-    s_train_set = ImageList(root, s_list_file, transform=TRANSFORM['train'])
-    s_train_loader = get_loader(s_train_set, args.seed, args.bsize, train=True)
-
-    s_test_set = ImageList(root, s_list_file, transform=TRANSFORM['test'])
-    s_test_loader = get_loader(s_test_set, args.seed, args.bsize*2, train=False)
-
-    t_train_list_file = text_root / t_name / args.dataset['list'][args.shot]['train']
-    t_test_list_file = text_root / t_name / args.dataset['list'][args.shot]['test']
-    t_val_list_file = text_root / t_name / args.dataset['list']['val']
-
-    t_labeled_train_set = ImageList(root, t_train_list_file, transform=TRANSFORM['train'])
-    t_labeled_train_loader = get_loader(t_labeled_train_set, args.seed, args.bsize, train=True)
-
-    t_labeled_test_set = ImageList(root, t_train_list_file, transform=TRANSFORM['test'])
-    t_labeled_test_loader = get_loader(t_labeled_test_set, args.seed, args.bsize, train=False)
-
-    t_unlabeled_train_set = ImageList(root, t_test_list_file, transform=TRANSFORM['train'], strong_transform=TRANSFORM['strong'] if 'CDAC' in args.method else None)
-    t_unlabeled_train_loader = get_loader(t_unlabeled_train_set, args.seed, args.bsize, train=True)
-    
-    t_unlabeled_test_set = ImageList(root, t_test_list_file, transform=TRANSFORM['test'])
-    t_unlabeled_test_loader = get_loader(t_unlabeled_test_set, args.seed, args.bsize*2, train=False)
-
-    t_val_set = ImageList(root, t_val_list_file, transform=TRANSFORM['test'])
-    t_val_loader = get_loader(t_val_set, args.seed, args.bsize, train=False)
-
-    return s_train_loader, s_test_loader, t_labeled_train_loader, t_labeled_test_loader, t_unlabeled_train_loader, t_unlabeled_test_loader, t_val_loader
 
 def pil_loader(path: str):
     with open(path, 'rb') as f:
@@ -83,19 +53,6 @@ def get_generator(seed):
     g.manual_seed(seed)
     return g
 
-def get_loader(dset, seed=None, bsize=24, train=True):
-    g = get_generator(seed)
-    if train:
-        dloader = InfiniteDataLoader(dset,
-            batch_size = bsize,
-            worker_init_fn=seed_worker, generator=g,
-            drop_last=True, num_workers=4)
-    else:
-        dloader = DataLoader(dset, 
-            batch_size = bsize,
-            worker_init_fn=seed_worker, generator=g, 
-            shuffle=False, drop_last=False, num_workers=4, pin_memory=True)
-    return dloader
 
 class ImageList(Dataset):
     def __init__(self, root, list_file, transform, strong_transform=None):
@@ -112,8 +69,9 @@ class ImageList(Dataset):
         if self.strong_transform:
             img1 = self.strong_transform(img)
             img2 = self.strong_transform(img)
-            return self.transform(img), label, img1, img2, idx
-        return self.transform(img), label, idx
+            return self.transform(img), img1, img2, label
+        return self.transform(img), label
+
 
 class _InfiniteSampler(Sampler):
     """Wraps another Sampler to yield an infinite stream."""
@@ -144,6 +102,102 @@ class InfiniteDataLoader:
     def __iter__(self):
         while True:
             yield next(self._infinite_iterator)
+
+    def __len__(self):
+        return 0
+
+
+class DALoader:
+    def __init__(self, args, domain_type, mode, labeled=None, strong_transform=False):
+        self.seed = args.seed
+        self.bsize = args.bsize
+        self.domain_name = args.dataset['domains'][args.source if domain_type == 'source' else args.target]
+        self.root = Path(args.dataset['path'])
+        self.text_root = Path(args.dataset['text_path'])
+        
+        self.domain_type = domain_type
+        self.mode = mode
+        self.labeled = labeled
+        self.num_shot = 3 if args.shot == '3shot' else 1
+        self.strong_transform = strong_transform
+        
+    def get_loader_name(self):
+        if self.labeled is None:
+            return f'{self.domain_type}_{self.mode}'
+        return f'{self.domain_type}_{self.labeled}_{self.mode}'
+    
+    def get_list_file_name(self):
+        if self.domain_type == 'source':
+            return 'all.txt'
+        if self.mode == 'validation':
+            return 'val.txt'
+        if self.labeled == 'labeled':
+            return f'train_{self.num_shot}.txt'
+        return f'test_{self.num_shot}.txt'
+    
+    def get_loader(self):
+        list_file = self.text_root / self.domain_name / self.get_list_file_name()
+        transform_mode = 'train' if self.mode == 'train' else 'test'
+        strong_transform = TRANSFORM['strong'] if self.strong_transform else None
+        dset = ImageList(self.root, list_file, transform=TRANSFORM[transform_mode], strong_transform=strong_transform)
+        
+        g = get_generator(self.seed)
+        
+        if self.mode == 'train':
+            dloader = InfiniteDataLoader(dset,
+                batch_size = self.bsize,
+                worker_init_fn=seed_worker, generator=g,
+                drop_last=True, num_workers=4)
+        else:
+            dloader = DataLoader(dset, 
+                batch_size = self.bsize,
+                worker_init_fn=seed_worker, generator=g, 
+                shuffle=False, drop_last=False, num_workers=4, pin_memory=True)
+        return dloader
+
+
+class DataIterativeLoader:
+    def __init__(self, args, strong_transform=False):
+        required_loader = [
+            DALoader(args, *types) 
+            for types in [
+                ['source', 'train'],
+                ['source', 'test'],
+                ['target', 'train', 'labeled'],
+                ['target', 'test', 'labeled'],
+                ['target', 'train', 'unlabeled', strong_transform],
+                ['target', 'test', 'unlabeled'],
+                ['target', 'validation']
+            ]
+        ]
+        
+        self.loaders = {
+            loader_type.get_loader_name(): loader_type.get_loader()
+            for loader_type in required_loader
+        }
+        
+        self.s_iter = iter(self.loaders['source_train'])
+        self.l_iter = iter(self.loaders['target_labeled_train'])
+        self.u_iter = iter(self.loaders['target_unlabeled_train'])
+        
+        self.strong_transform = strong_transform
+    
+    def __iter__(self):
+        while True:
+            sx, sy = next(self.s_iter)
+            sx, sy = sx.float().cuda(), sy.long().cuda()
+            
+            tx, ty = next(self.l_iter)
+            tx, ty = tx.float().cuda(), ty.long().cuda()
+            
+            if self.strong_transform:
+                ux, ux1, ux2, _ = next(self.u_iter)
+                ux = [ux.float().cuda(), ux1.float().cuda(), ux2.float().cuda()]
+            else:  
+                ux, _ = next(self.u_iter)
+                ux = [ux.float().cuda()]
+            
+            yield (sx, sy), (tx, ty), ux
 
     def __len__(self):
         return 0
