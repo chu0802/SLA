@@ -1,18 +1,15 @@
 # Source Label Adaptation
 The official Pytorch implementation of "Semi-Supervised Domain Adaptation with Source Label Adaptation" accepted by CVPR 2023. Check more details of this work in our paper: [[Arxiv]](https://arxiv.org/abs/2302.02335).
 
-## Python version & Packages
+## Setting up Python Environment
 
-`python==3.8.13`
+To ensure that the project runs smoothly, set up a dedicated Python environment with all the necessary packages installed. Use conda to create a new environment by running the following command:
 
 ```
-configargparse==1.5.3
-torch==1.12.0
-torchvision==0.13.0
-tensorboard==2.9.0
-Pillow==9.0.1
-numpy==1.22.3
+conda create --name <env_name> python=3.10.10 --file requirements.txt
 ```
+
+Replace <env_name> with the desired name of your new environment. This command will create a new environment with Python version 3.10.10 and install all the required packages specified in the requirements.txt file.
 
 ## Data Preparation
 
@@ -67,7 +64,7 @@ Replace <DATASET> with the name of the dataset you want to prepare (e.g. DomainN
 After running the data preparation script, you should be able to use the resulting data files in this repository.
 
 
-## Running the model
+## \<WIP\> Running the model
     
 To run the main Python file, use the following command:
 
