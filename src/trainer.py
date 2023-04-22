@@ -104,7 +104,7 @@ class BaseDATrainer:
                     step,
                     {
                         "evaluation accuracy": eval_acc,
-                        "t_acc": t_acc,
+                        "test accuracy": t_acc,
                     },
                 )
                 wandb.run.summary["best_test_accuracy"] = self.meter.best_acc
