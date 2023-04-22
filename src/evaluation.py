@@ -1,5 +1,6 @@
 import torch
 
+
 def evaluation(loader, model):
     model.eval()
     acc, cnt = 0, 0
@@ -12,6 +13,7 @@ def evaluation(loader, model):
             cnt += len(x)
     model.train()
     return 100 * acc / cnt
+
 
 def prediction(loader, model):
     model.eval()
