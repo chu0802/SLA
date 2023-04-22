@@ -1,6 +1,6 @@
 import torch
 from evaluation import evaluation
-from util import LR_Scheduler, TIMING_TABLE, BaseTrainerConfig, SLATrainerConfig
+from util import LR_Scheduler, TIMING_TABLE, BaseTrainerConfig, SLATrainerConfig, MetricMeter
 from model import ResModel, ProtoClassifier
 import wandb
 import time
@@ -23,10 +23,7 @@ class BaseDATrainer:
         self.iter_loaders = iter(loaders)
         
         # recording
-        self.counter = 0
-        self.best_acc = 0
-        self.best_val_acc = 0
-        self.start_time = 0
+        self.meter = MetricMeter()
         
         # required arguments for DATrainer
         self.config = BaseTrainerConfig.from_args(args)
@@ -41,19 +38,18 @@ class BaseDATrainer:
         wandb.log({
             **info,
             'iteration': step,
-            f'delta time ({unit})': (time.perf_counter() - self.start_time) * TIMING_TABLE[unit],
+            f'running time ({unit})': (time.perf_counter() - self.meter.start_time) * TIMING_TABLE[unit],
         })
     
     def evaluate(self):
         val_acc = evaluation(self.loaders.loaders['target_validation'], self.model)
         t_acc = evaluation(self.loaders.loaders['target_unlabeled_test'], self.model)
-        if val_acc >= self.best_val_acc:
-            self.best_val_acc = val_acc
-            self.counter = 0
-            # save(self.mdh.getModelPath(), self.model)
-            self.best_acc = t_acc
+        if val_acc >= self.meter.best_val_acc:
+            self.meter.best_val_acc = val_acc
+            self.meter.counter = 0
+            self.meter.best_acc = t_acc
         else:
-            self.counter += 1
+            self.meter.counter += 1
         return val_acc, t_acc
     
     def training_step(self, step, *data):
@@ -71,7 +67,7 @@ class BaseDATrainer:
     def train(self):
         self.model.train()
 
-        self.start_time = time.perf_counter()
+        self.meter.start_time = time.perf_counter()
         for step in range(1, self.config.num_iters+1):
             (sx, sy), (tx, ty), ux = next(self.iter_loaders)
             s_loss, t_loss, u_loss = self.training_step(step, sx, sy, tx, ty, ux)
@@ -97,10 +93,10 @@ class BaseDATrainer:
                         't_acc': t_acc,
                     }
                 )
-                wandb.run.summary["best_test_accuracy"] = self.best_acc
+                wandb.run.summary["best_test_accuracy"] = self.meter.best_acc
 
             # early-stopping
-            if self.counter > 10000 or step == self.config.num_iters:
+            if self.meter.counter > 10000 or step == self.config.num_iters:
                 break
 
 class UnlabeledDATrainer(BaseDATrainer):
