@@ -9,7 +9,7 @@ dataset_cfg:
                 - Art
                 - Clipart
                 - Product
-                - RealWorld
+                - Real
     Office31:
         name: Office31
         path: /tmp2/chu0802/data/Office31
