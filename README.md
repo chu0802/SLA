@@ -111,7 +111,7 @@ To apply our proposed SLA method, append the suffix "_SLA" to the selected metho
 python main.py --method mme_SLA --dataset OfficeHome --source 0 --target 1 --seed 1102 --num_iters 10000 --shot 3shot --alpha 0.3 --update_interval 500 --warmup 500 --T 0.6
 ```
 
-This command runs the MME + SLA model on the 3-shot A -> C Office-Home dataset, with the specified hyperparameters. Check our main paper to find the recommended hyperparameters for each method on each dataset.
+This command runs the MME + SLA model on the 3-shot A -> C Office-Home dataset, with the specified hyperparameters. Check our [main paper](https://arxiv.org/abs/2302.02335) to find the recommended hyperparameters for each method on each dataset.
 
 <a name="citation"></a>
 ## Citation
