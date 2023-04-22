@@ -7,9 +7,9 @@ import random
 
 import numpy as np
 import PIL
-import PIL.ImageOps
-import PIL.ImageEnhance
 import PIL.ImageDraw
+import PIL.ImageEnhance
+import PIL.ImageOps
 from PIL import Image
 
 logger = logging.getLogger(__name__)
@@ -48,8 +48,8 @@ def CutoutAbs(img, v, **kwarg):
     w, h = img.size
     x0 = np.random.uniform(0, w)
     y0 = np.random.uniform(0, h)
-    x0 = int(max(0, x0 - v / 2.))
-    y0 = int(max(0, y0 - v / 2.))
+    x0 = int(max(0, x0 - v / 2.0))
+    y0 = int(max(0, y0 - v / 2.0))
     x1 = int(min(w, x0 + v))
     y1 = int(min(h, y0 + v))
     xy = (x0, y0, x1, y1)
@@ -146,41 +146,45 @@ def _int_parameter(v, max_v):
 
 def fixmatch_augment_pool():
     # FixMatch paper
-    augs = [(AutoContrast, None, None),
-            (Brightness, 0.9, 0.05),
-            (Color, 0.9, 0.05),
-            (Contrast, 0.9, 0.05),
-            (Equalize, None, None),
-            (Identity, None, None),
-            (Posterize, 4, 4),
-            (Rotate, 30, 0),
-            (Sharpness, 0.9, 0.05),
-            (ShearX, 0.3, 0),
-            (ShearY, 0.3, 0),
-            (Solarize, 256, 0),
-            (TranslateX, 0.3, 0),
-            (TranslateY, 0.3, 0)]
+    augs = [
+        (AutoContrast, None, None),
+        (Brightness, 0.9, 0.05),
+        (Color, 0.9, 0.05),
+        (Contrast, 0.9, 0.05),
+        (Equalize, None, None),
+        (Identity, None, None),
+        (Posterize, 4, 4),
+        (Rotate, 30, 0),
+        (Sharpness, 0.9, 0.05),
+        (ShearX, 0.3, 0),
+        (ShearY, 0.3, 0),
+        (Solarize, 256, 0),
+        (TranslateX, 0.3, 0),
+        (TranslateY, 0.3, 0),
+    ]
     return augs
 
 
 def my_augment_pool():
     # Test
-    augs = [(AutoContrast, None, None),
-            (Brightness, 1.8, 0.1),
-            (Color, 1.8, 0.1),
-            (Contrast, 1.8, 0.1),
-            (Cutout, 0.2, 0),
-            (Equalize, None, None),
-            (Invert, None, None),
-            (Posterize, 4, 4),
-            (Rotate, 30, 0),
-            (Sharpness, 1.8, 0.1),
-            (ShearX, 0.3, 0),
-            (ShearY, 0.3, 0),
-            (Solarize, 256, 0),
-            (SolarizeAdd, 110, 0),
-            (TranslateX, 0.45, 0),
-            (TranslateY, 0.45, 0)]
+    augs = [
+        (AutoContrast, None, None),
+        (Brightness, 1.8, 0.1),
+        (Color, 1.8, 0.1),
+        (Contrast, 1.8, 0.1),
+        (Cutout, 0.2, 0),
+        (Equalize, None, None),
+        (Invert, None, None),
+        (Posterize, 4, 4),
+        (Rotate, 30, 0),
+        (Sharpness, 1.8, 0.1),
+        (ShearX, 0.3, 0),
+        (ShearY, 0.3, 0),
+        (Solarize, 256, 0),
+        (SolarizeAdd, 110, 0),
+        (TranslateX, 0.45, 0),
+        (TranslateY, 0.45, 0),
+    ]
     return augs
 
 
