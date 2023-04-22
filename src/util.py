@@ -28,10 +28,13 @@ def load(path, model):
 def wandb_logger(keys):
     def decorator(func):
         def wrap(args):
+            config = {k: getattr(args, k) for k in keys if k in args.__dict__}
+            config['source'] = args.dataset["domains"][args.source]
+            config['target'] = args.dataset["domains"][args.target]
             wandb.init(
                 project=f'{args.dataset["name"]}_{args.shot}',
-                name=args.exp_name,
-                config= {k: getattr(args, k) for k in keys if k in args.__dict__}
+                name=args.method,
+                config= config
             )
             func(args)
             wandb.finish()
@@ -84,3 +87,4 @@ class SLATrainerConfig(BaseTrainerConfig):
     warmup: int
     T: float
     alpha: float
+    update_interval: int
