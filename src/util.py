@@ -88,3 +88,10 @@ class SLATrainerConfig(BaseTrainerConfig):
     T: float
     alpha: float
     update_interval: int
+    
+@dataclass
+class MetricMeter:
+    counter: int = 0
+    best_acc: float = 0
+    best_val_acc: float = 0
+    start_time: float = 0
