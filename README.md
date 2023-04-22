@@ -1,6 +1,34 @@
 # Source Label Adaptation
-The official Pytorch implementation of "Semi-Supervised Domain Adaptation with Source Label Adaptation" accepted by CVPR 2023. Check more details of this work in our paper: [[Arxiv]](https://arxiv.org/abs/2302.02335).
+The official Pytorch implementation of "Semi-Supervised Domain Adaptation with Source Label Adaptation" accepted to CVPR 2023. Check more details of this work in our paper: [[Arxiv]](https://arxiv.org/abs/2302.02335). 
 
+If you find our work useful, please cite it using the following BibTeX entry:
+
+```bibtex
+@article{yu2023semi,
+  title={Semi-Supervised Domain Adaptation with Source Label Adaptation},
+  author={Yu, Yu-Chu and Lin, Hsuan-Tien},
+  journal={arXiv preprint arXiv:2302.02335},
+  year={2023}
+}
+```
+
+## Table of Contents
+- [Introduction](#intro)
+- [Demo](#demo)
+- [Setting up Python Environment](#python)
+- [Data Preparation](#data)
+- [Setting up Wandb](#wandb)
+- [Running the model](#run)
+- [Acknowledgement](#acknowledgement)
+
+<a name="intro"></a>
+## Introduction
+
+In this work, we present a general framework, Source Label Adaptation (SLA) for Semi-Supervised Domain Adaptation. We introduce a novel source-adaptive paradigm that adapts the source data to match the target data. Our key idea is to view the source data as a noisily-labeled version of the ideal target data. Since the paradigm is very different from the core ideas behind existing SSDA ap- proaches, our proposed model can be easily coupled with the current state-of-the-art SSDA methods and further improve their performance. The illustration of the framework is shown below.
+
+![](./imgs/intro.png)
+
+<a name="demo"></a>
 ## Demo
 
 The demo below shows results of 6 different methods implemented in the code on 3-shot Office-Home A -> C case with the seed `19980802`.
@@ -13,13 +41,7 @@ After selecting the test accuracy achieved at the iteration when the best evalua
 
 More details can be found in [our main paper](https://arxiv.org/abs/2302.02335).
 
-## Table of Contents
-- [Setting up Python Environment](#python)
-- [Data Preparation](#data)
-- [Setting up Wandb](#wandb)
-- [Running the model](#run)
-- [Citation](#citation)
-- [Acknowledgement](#acknowledgement)
+
 
 <a name="python"></a>
 ## Setting up Python Environment 
@@ -124,19 +146,6 @@ python main.py --method mme_SLA --dataset OfficeHome --source 0 --target 1 --see
 ```
 
 This command runs the MME + SLA model on the 3-shot A -> C Office-Home dataset, with the specified hyperparameters. Check our [main paper](https://arxiv.org/abs/2302.02335) to find the recommended hyperparameters for each method on each dataset.
-
-<a name="citation"></a>
-## Citation
-
-If this work is useful in your research, please cite it using the following BibTeX entry:
-```bibtex
-@article{yu2023semi,
-  title={Semi-Supervised Domain Adaptation with Source Label Adaptation},
-  author={Yu, Yu-Chu and Lin, Hsuan-Tien},
-  journal={arXiv preprint arXiv:2302.02335},
-  year={2023}
-}
-```
 
 <a name="acknowledgement"></a>
 ## Acknowledgement 
