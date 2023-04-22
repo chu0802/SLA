@@ -68,6 +68,11 @@ Replace <DATASET> with the name of the dataset you want to prepare (e.g. DomainN
 
 After running the data preparation script, you should be able to use the resulting data files in this repository.
 
+## Setting up Wandb
+
+We use Wandb to record our experimental results. If you don't have a Wandb account, you can sign up for one [here](https://wandb.ai).
+
+Once you have an account, you can login by running the code for the first time. The code will prompt you to login to your Wandb account.
 
 ## Running the model
     
