@@ -70,15 +70,32 @@ Replace <DATASET> with the name of the dataset you want to prepare (e.g. DomainN
 After running the data preparation script, you should be able to use the resulting data files in this repository.
 
 
-## \<WIP\> Running the model
+## Running the model
     
+### Baseline Methods
+
 To run the main Python file, use the following command:
 
 ```sh
-python main.py --method MME_LC --source 0 --target 1 --seed 1102 --num_iters 10000 --shot 3shot --alpha 0.3 --update_interval 500 --warmup 500 --T 0.6
+python main.py --method mme --dataset OfficeHome --source 0 --target 1 --seed 1102 --num_iters 10000 --shot 3shot
 ```
     
-This command runs the MME + SLA model on the 3-shot A -> C Office-Home dataset, with the specified hyperparameters. You can modify the command to run different experiments with different hyperparameters or on different datasets.
+This command runs the MME model on the 3-shot A -> C Office-Home dataset, with the specified hyperparameters. You can modify the command to run different experiments with different hyperparameters or on different datasets.
+
+The following methods are currently supported:
+1. `base`: Uses **S+T** as described in our [main paper](https://arxiv.org/abs/2302.02335).
+2. `mme`: Uses **mme** as described in [this paper](https://openaccess.thecvf.com/content_ICCV_2019/papers/Saito_Semi-Supervised_Domain_Adaptation_via_Minimax_Entropy_ICCV_2019_paper.pdf).
+3. `cdac`: Uses **cdac** as described in [this paper](https://openaccess.thecvf.com/content/CVPR2021/papers/Li_Cross-Domain_Adaptive_Clustering_for_Semi-Supervised_Domain_Adaptation_CVPR_2021_paper.pdf).
+
+### Applying SLA to baseline methods
+
+To apply our proposed SLA method, append the suffix "_SLA" to the selected method. For example:
+
+```sh
+python main.py --method mme_SLA --dataset OfficeHome --source 0 --target 1 --seed 1102 --num_iters 10000 --shot 3shot --alpha 0.3 --update_interval 500 --warmup 500 --T 0.6
+```
+
+This command runs the MME + SLA model on the 3-shot A -> C Office-Home dataset, with the specified hyperparameters. Check our main paper to find the recommended hyperparameters for each method on each dataset.
 
 ## Citation
 
