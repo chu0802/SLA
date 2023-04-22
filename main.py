@@ -10,8 +10,6 @@ from dataset import DataIterativeLoader
 from trainer import BaseDATrainer, UnlabeledDATrainer, get_trainer
 from util import set_seed, wandb_logger
 
-# from trainer import HyperParameters, ConfigParameters
-
 
 def arguments_parsing():
     p = configargparse.ArgumentParser(
