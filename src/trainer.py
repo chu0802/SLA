@@ -70,8 +70,7 @@ class BaseDATrainer:
     
     def train(self):
         self.model.train()
-        wandb.watch(self.model, log_freq=100)
-        
+
         self.start_time = time.perf_counter()
         for step in range(1, self.config.num_iters+1):
             (sx, sy), (tx, ty), ux = next(self.iter_loaders)
@@ -103,40 +102,6 @@ class BaseDATrainer:
             # early-stopping
             if self.counter > 10000 or step == self.config.num_iters:
                 break
-            
-class SLADATrainer(BaseDATrainer):
-    def __init__(
-        self, 
-        loaders,
-        args,
-        backbone='resnet34'
-    ):
-        BaseDATrainer.__init__(self, loaders, args, backbone)
-        self.config = SLATrainerConfig.from_args(args)
-        self.ppc = ProtoClassifier(args.dataset['num_classes'])
-        
-    
-    def get_source_loss(self, step, sx, sy):
-        sf = self.model.get_features(sx)
-        if step > self.config.warmup:
-            sy2 = self.ppc(sf.detach(), self.config.T)
-            s_loss = self.model.lc_loss(sf, sy, sy2, self.config.alpha)
-        else:
-            s_loss = self.model.feature_base_loss(sf, sy)
-        return s_loss
-    
-    def ppc_update(self, step):
-        if step == self.config.warmup:
-            self.ppc.init(self.model, self.loaders.loaders['target_unlabeled_test'])
-            self.lr_scheduler.refresh()
-
-        if step > self.config.warmup and step % self.update_interval == 0:
-            self.ppc.init(self.model, self.loaders.loaders['target_unlabeled_test'])
-        
-    
-    def training_step(self, step, *data):
-        BaseDATrainer.training_step(self, step, *data)
-        self.ppc_update(step)
 
 class UnlabeledDATrainer(BaseDATrainer):
     def __init__(
@@ -146,7 +111,7 @@ class UnlabeledDATrainer(BaseDATrainer):
         backbone='resnet34', 
         unlabeled_method='mme'
     ):  
-        BaseDATrainer.__init__(self, loaders, args, backbone)
+        super().__init__(loaders, args, backbone)
         self.unlabeled_method = unlabeled_method
 
     def unlabeled_training_step(self, step, ux):
@@ -159,24 +124,44 @@ class UnlabeledDATrainer(BaseDATrainer):
         return u_loss.item()
     
     def training_step(self, step, sx, sy, tx, ty, ux):
-        s_loss, t_loss, _ = BaseDATrainer.training_step(self, step, sx, sy, tx, ty, ux)
+        s_loss, t_loss, _ = super().training_step(step, sx, sy, tx, ty, ux)
         u_loss = self.unlabeled_training_step(step, ux)
         return s_loss, t_loss, u_loss
 
-class UnlabeledSLADATrainer(UnlabeledDATrainer, SLADATrainer):
-    def __init__(
-        self, 
-        loaders,
-        args,
-        backbone='resnet34', 
-        unlabeled_method='mme'
-    ):
-        UnlabeledDATrainer.__init__(self, loaders, args, backbone, unlabeled_method=unlabeled_method)
-        SLADATrainer.__init__(self, loaders, args, backbone)
-        self.config = SLATrainerConfig.from_args(args)
-    
-    def training_step(self, step, *data):
-        s_loss, t_loss, u_loss = UnlabeledDATrainer.training_step(self, step, *data)
-        SLADATrainer.ppc_update(self, step)
+def get_SLA_trainer(base_class):
+    class SLADATrainer(base_class):
+        def __init__(self, loaders, args, **kwargs):
+            super().__init__(loaders, args, **kwargs)
+            self.config = SLATrainerConfig.from_args(args)
+            self.ppc = ProtoClassifier(args.dataset['num_classes'])
+            
+        def get_source_loss(self, step, sx, sy):
+            sf = self.model.get_features(sx)
+            if step > self.config.warmup:
+                sy2 = self.ppc(sf.detach(), self.config.T)
+                s_loss = self.model.lc_loss(sf, sy, sy2, self.config.alpha)
+            else:
+                s_loss = self.model.feature_base_loss(sf, sy)
+            return s_loss
         
-        return s_loss, t_loss, u_loss
+        def ppc_update(self, step):
+            if step == self.config.warmup:
+                self.ppc.init(self.model, self.loaders.loaders['target_unlabeled_test'])
+                self.lr_scheduler.refresh()
+
+            if step > self.config.warmup and step % self.config.update_interval == 0:
+                self.ppc.init(self.model, self.loaders.loaders['target_unlabeled_test'])
+                
+        def training_step(self, step, *data):
+            s_loss, t_loss, u_loss = super().training_step(step, *data)
+            self.ppc_update(step)
+            
+            return s_loss, t_loss, u_loss
+    return SLADATrainer
+
+def get_trainer(base_class, label_trick=None):
+    match label_trick:
+        case 'SLA', *_:
+            return get_SLA_trainer(base_class)
+        case _:
+            return base_class
