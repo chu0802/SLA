@@ -3,32 +3,6 @@ import numpy as np
 import torch.nn.functional as F
 import torch.nn as nn
 
-def cdac_loss(model, ux, ux1, ux2, target, BCE, w_cons):
-    """ Get losses for unlabeled samples."""
-    f = model.f(ux)
-    f1 = model.f(ux1)
-    f2 = model.f(ux2)
-
-    out = model.c(f, reverse=True)
-    out1 = model.c(f1, reverse=True)
-    prob, prob1 = F.softmax(out, dim=1), F.softmax(out1, dim=1)
-
-    aac_loss = advbce_unlabeled(target=target, f=f, prob=prob, prob1=prob1, bce=BCE)
-    
-    out = model.c(f)
-    out1 = model.c(f1)
-    out2 = model.c(f2)
-
-    prob, prob1, prob2 = [F.softmax(i, dim=1) for i in [out, out1, out2]]
-    mp, pl = torch.max(prob.detach(), dim=1)
-    mask = mp.ge(0.95).float()
-
-    pl_loss = (F.cross_entropy(out2, pl, reduction='none') * mask).mean()
-
-    con_loss = w_cons * F.mse_loss(prob1, prob2)
-
-    return aac_loss, pl_loss, con_loss
-
 def advbce_unlabeled(target, f, prob, prob1, bce):
     """ Construct adversarial adpative clustering loss."""
     target_ulb = pairwise_target(f, target)
