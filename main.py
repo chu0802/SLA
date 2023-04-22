@@ -43,14 +43,9 @@ def arguments_parsing():
     p.add('--momentum', type=float, default=0.9)
     p.add('--weight_decay', type=float, default=5e-4)
     p.add('--T', type=float, default=0.6)
-
-    # information
-    p.add('--note', type=str, default='')
-    p.add('--order', type=int, default=0)
-    p.add('--init', type=str, default='')
     return p.parse_args()
     
-@wandb_logger(keys=['source', 'target', 'seed', 'num_iters', 'alpha', 'T', 'init', 'note', 'update_interval', 'lr', 'order', 'warmup'])
+@wandb_logger(keys=['source', 'target', 'seed', 'num_iters', 'alpha', 'T', 'update_interval', 'lr', 'warmup'])
 def main(args):
     os.environ['CUDA_VISIBLE_DEVICES'] = args.device
     set_seed(args.seed)
