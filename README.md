@@ -21,11 +21,10 @@ However, the code does not use any PyTorch 2.0 features and should be compatible
 
 ### Supported Datasets
 
-Currently, we support the following three datasets:
+Currently, we support the following datasets:
 
 - [DomainNet](http://ai.bu.edu/M3SDA/)
 - [OfficeHome](https://www.hemanthdv.org/officeHomeDataset.html)
-- [Office31](https://faculty.cc.gatech.edu/~judy/domainadapt/)
 
 ### Dataset Architecture
 
