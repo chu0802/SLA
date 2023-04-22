@@ -5,15 +5,19 @@ import sys
 sys.path.append('src')
 
 from util import set_seed, wandb_logger
-from trainer import BaseDATrainer, UnlabeledDATrainer
+from trainer import BaseDATrainer, UnlabeledDATrainer, get_trainer
 from dataset import DataIterativeLoader
 # from trainer import HyperParameters, ConfigParameters
 
 def arguments_parsing():
     p = configargparse.ArgumentParser(config_file_parser_class=configargparse.YAMLConfigFileParser)
     p.add('--config', is_config_file=True, default='./config.yaml')
-    p.add('--device', type=str, default='1')
-    p.add('--method', type=str, default='mme')
+    p.add('--device', type=str, default='5')
+    p.add('--method', type=str, default='mme_SLA', choices=[
+        'base', 'base_SLA',
+        'mme', 'mme_SLA',
+        'cdac', 'cdac_SLA'
+    ])
 
     p.add('--dataset', type=str, default='OfficeHome')
     p.add('--source', type=int, default=0)
@@ -28,9 +32,9 @@ def arguments_parsing():
 
     p.add('--eval_interval', type=int, default=500)
     p.add('--log_interval', type=int, default=100)
-    p.add('--update_interval', type=int, default=0)
+    p.add('--update_interval', type=int, default=500)
     p.add('--early', type=int, default=0)
-    p.add('--warmup', type=int, default=0)
+    p.add('--warmup', type=int, default=500)
     # configurations
     p.add('--dataset_cfg', type=literal_eval)
     
@@ -44,24 +48,27 @@ def arguments_parsing():
     p.add('--note', type=str, default='')
     p.add('--order', type=int, default=0)
     p.add('--init', type=str, default='')
-    p.add('--exp_name', type=str, default='test')
     return p.parse_args()
     
-@wandb_logger(keys=['method', 'source', 'target', 'seed', 'num_iters', 'alpha', 'T', 'init', 'note', 'update_interval', 'lr', 'order', 'warmup'])
+@wandb_logger(keys=['source', 'target', 'seed', 'num_iters', 'alpha', 'T', 'init', 'note', 'update_interval', 'lr', 'order', 'warmup'])
 def main(args):
     os.environ['CUDA_VISIBLE_DEVICES'] = args.device
     set_seed(args.seed)
     
-    strong_transform_methods = ['cdac']
-    loaders = DataIterativeLoader(args, strong_transform=any([args.method in m for m in strong_transform_methods]))
-    
-    match args.method:
-        case 'base':
-            trainer = BaseDATrainer(loaders, args)
-        case 'mme' | 'cdac':
-            trainer = UnlabeledDATrainer(loaders, args, unlabeled_method=args.method)
+    match args.method.split('_'):
+        case 'cdac', *_:
+            loaders = DataIterativeLoader(args, strong_transform=True)
+        case _:
+            loaders = DataIterativeLoader(args, strong_transform=False)
+            
+    match args.method.split('_'):
+        case 'base', *label_trick:
+            trainer = get_trainer(BaseDATrainer, label_trick)(loaders, args)
+        case ('mme' | 'cdac') as unlabeled_method, *label_trick:
+            trainer = get_trainer(UnlabeledDATrainer, label_trick)(loaders, args, unlabeled_method=unlabeled_method)
+
     trainer.train()
-    
+
 if __name__ == '__main__':
     args = arguments_parsing()
     # replace the configuration
