@@ -72,7 +72,7 @@ After running the data preparation script, you should be able to use the resulti
 
 ## Running the model
     
-### Baseline Methods
+### Baseline methods
 
 To run the main Python file, use the following command:
 
