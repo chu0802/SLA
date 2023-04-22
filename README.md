@@ -1,6 +1,14 @@
 # Source Label Adaptation
 The official Pytorch implementation of "Semi-Supervised Domain Adaptation with Source Label Adaptation" accepted by CVPR 2023. Check more details of this work in our paper: [[Arxiv]](https://arxiv.org/abs/2302.02335).
 
+## Demo
+
+Check out the demo below for results of 6 different methods implemented in the code on 3-shot Office-Home A -> C case with the seed `19980802`.
+
+![](./imgs/demo.png)
+
+After applying our SLA method, we observed improvements of +3.214%, +1.007%, and +2.183% for the `base`, `mme`, and `cdac` methods, respectively.
+
 ## Table of Contents
 - [Setting up Python Environment](#python)
 - [Data Preparation](#data)
