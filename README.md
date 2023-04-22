@@ -3,11 +3,15 @@ The official Pytorch implementation of "Semi-Supervised Domain Adaptation with S
 
 ## Demo
 
-Check out the demo below for results of 6 different methods implemented in the code on 3-shot Office-Home A -> C case with the seed `19980802`.
+The demo below shows results of 6 different methods implemented in the code on 3-shot Office-Home A -> C case with the seed `19980802`.
 
-![](./imgs/demo.png)
+![](./imgs/test_acc.png)
 
-After applying our SLA method, we observed improvements of +3.214%, +1.007%, and +2.183% for the `base`, `mme`, and `cdac` methods, respectively.
+![](./imgs/eval_acc.png)
+
+After selecting the test accuracy achieved at the iteration when the best evaluation accuracy was obtained, we observed improvements of `+3.214%, +1.007%, +2.183%` for the `base, mme, cdac` methods, respectively, after applying our SLA method.
+
+More details can be found in [our main paper](https://arxiv.org/abs/2302.02335).
 
 ## Table of Contents
 - [Setting up Python Environment](#python)
