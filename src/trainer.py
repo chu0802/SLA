@@ -135,7 +135,7 @@ def get_SLA_trainer(base_class):
             sf = self.model.get_features(sx)
             if step > self.config.warmup:
                 sy2 = self.ppc(sf.detach(), self.config.T)
-                s_loss = self.model.lc_loss(sf, sy, sy2, self.config.alpha)
+                s_loss = self.model.sla_loss(sf, sy, sy2, self.config.alpha)
             else:
                 s_loss = self.model.feature_base_loss(sf, sy)
             return s_loss

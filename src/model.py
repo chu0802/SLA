@@ -99,7 +99,7 @@ class ResModel(nn.Module):
         return self.criterion(self.forward(x), y).mean()
     def feature_base_loss(self, f, y):
         return self.criterion(self.get_predictions(f), y).mean()
-    def lc_loss(self, f, y1, y2, alpha):
+    def sla_loss(self, f, y1, y2, alpha):
         out = self.get_predictions(f)
         log_softmax_out = F.log_softmax(out, dim=1)
         l_loss = self.criterion(out, y1)
