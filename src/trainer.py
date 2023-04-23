@@ -110,6 +110,8 @@ class BaseDATrainer:
                 wandb.run.summary["best_test_accuracy"] = self.meter.best_acc
 
             # early-stopping
+            # Here we set a huge number to plot the whole testing procedure.
+            # Change it to a reasonable value for early-stopping
             if self.meter.counter > 10000 or step == self.config.num_iters:
                 break
 
