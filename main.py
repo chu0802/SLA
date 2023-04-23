@@ -16,11 +16,11 @@ def arguments_parsing():
         config_file_parser_class=configargparse.YAMLConfigFileParser
     )
     p.add("--config", is_config_file=True, default="./config.yaml")
-    p.add("--device", type=str, default="5")
+    p.add("--device", type=str, default="4")
     p.add(
         "--method",
         type=str,
-        default="mme_SLA",
+        default="base_SLA",
         choices=["base", "base_SLA", "mme", "mme_SLA", "cdac", "cdac_SLA"],
     )
 
@@ -31,7 +31,7 @@ def arguments_parsing():
     # training settings
     p.add("--seed", type=int, default=19980802)
     p.add("--bsize", type=int, default=24)
-    p.add("--num_iters", type=int, default=8000)
+    p.add("--num_iters", type=int, default=10000)
     p.add("--shot", type=str, default="3shot", choices=["1shot", "3shot"])
     p.add("--alpha", type=float, default=0.3)
 
@@ -39,7 +39,7 @@ def arguments_parsing():
     p.add("--log_interval", type=int, default=100)
     p.add("--update_interval", type=int, default=500)
     p.add("--early", type=int, default=0)
-    p.add("--warmup", type=int, default=500)
+    p.add("--warmup", type=int, default=2000)
     # configurations
     p.add("--dataset_cfg", type=literal_eval)
 
@@ -48,11 +48,15 @@ def arguments_parsing():
     p.add("--momentum", type=float, default=0.9)
     p.add("--weight_decay", type=float, default=5e-4)
     p.add("--T", type=float, default=0.6)
+
+    # note
+    p.add("--note", type=str, default="")
     return p.parse_args()
 
 
 @wandb_logger(
     keys=[
+        "method",
         "source",
         "target",
         "seed",
@@ -62,6 +66,7 @@ def arguments_parsing():
         "update_interval",
         "lr",
         "warmup",
+        "note",
     ]
 )
 def main(args):
