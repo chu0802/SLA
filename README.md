@@ -154,4 +154,4 @@ If you find our work useful, please cite it using the following BibTeX entry:
 
 This code is partially based on [MME](https://github.com/VisionLearningGroup/SSDA_MME), [CDAC](https://github.com/lijichang/CVPR2021-SSDA) and [DeepDA](https://github.com/jindongwang/transferlearning/tree/master/code/DeepDA).
 
-The backup urls for OfficeHome, Office31 are provided at [here](https://github.com/jindongwang/transferlearning/blob/master/data/dataset.md).
+The backup urls for OfficeHome, Office31 are provided [here](https://github.com/jindongwang/transferlearning/blob/master/data/dataset.md).
