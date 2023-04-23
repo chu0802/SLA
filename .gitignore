@@ -6,6 +6,8 @@ script
 wandb
 .vscode
 .flake8
+script_generator.py
+*.sh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
