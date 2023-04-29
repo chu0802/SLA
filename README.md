@@ -143,11 +143,12 @@ This command runs the MME + SLA model on the 3-shot A -> C Office-Home dataset, 
 If you find our work useful, please cite it using the following BibTeX entry:
 
 ```bibtex
-@article{yu2023semi,
-  title={Semi-Supervised Domain Adaptation with Source Label Adaptation},
-  author={Yu, Yu-Chu and Lin, Hsuan-Tien},
-  journal={arXiv preprint arXiv:2302.02335},
-  year={2023}
+@inproceedings{yu2023sla,
+  title     = {Semi-Supervised Domain Adaptation with Source Label Adaptation},
+  author    = {Yu-Chu, Yu and Hsuan-Tien, Lin},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  month     = {June},
+  year      = {2023},
 }
 ```
 
