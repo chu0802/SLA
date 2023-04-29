@@ -29,6 +29,8 @@ The demo below shows results of 6 different methods implemented in the code on 3
 
 After selecting the test accuracy achieved at the iteration when the best evaluation accuracy was obtained, we observed improvements of `+3.214%, +1.007%, +2.183%` for the `base, mme, cdac` methods, respectively, after applying our SLA method.
 
+Check more demo in our [demo page](https://github.com/chu0802/SLA/tree/main/demo).
+
 More experimental results can be found in [our main paper](https://arxiv.org/abs/2302.02335).
 
 
