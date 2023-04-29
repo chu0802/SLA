@@ -23,7 +23,7 @@ In this work, we present a general framework, Source Label Adaptation (SLA) for 
 
 The demo below shows results of 6 different methods implemented in the code on 3-shot Office-Home A -> C case with the seed `19980802`.
 
-![](./demo/imgs/hompage_demo/test_acc.png)
+![](./demo/imgs/homepage_demo/test_acc.png)
 
 ![](./demo/imgs/homepage_demo/eval_acc.png)
 
