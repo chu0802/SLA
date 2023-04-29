@@ -1,5 +1,5 @@
 # Source Label Adaptation
-The official Pytorch implementation of "Semi-Supervised Domain Adaptation with Source Label Adaptation" accepted to CVPR 2023. Check more details of this work in our paper: [[Arxiv]](https://arxiv.org/abs/2302.02335). 
+The official Pytorch implementation of "Semi-Supervised Domain Adaptation with Source Label Adaptation" accepted to CVPR 2023. Check more details of this work in our paper: [[Arxiv]](https://arxiv.org/abs/2302.02335).
 
 ## Table of Contents
 - [Introduction](#intro)
@@ -23,9 +23,9 @@ In this work, we present a general framework, Source Label Adaptation (SLA) for 
 
 The demo below shows results of 6 different methods implemented in the code on 3-shot Office-Home A -> C case with the seed `19980802`.
 
-![](./imgs/test_acc.png)
+![](./demo/imgs/hompage_demo/test_acc.png)
 
-![](./imgs/eval_acc.png)
+![](./demo/imgs/homepage_demo/eval_acc.png)
 
 After selecting the test accuracy achieved at the iteration when the best evaluation accuracy was obtained, we observed improvements of `+3.214%, +1.007%, +2.183%` for the `base, mme, cdac` methods, respectively, after applying our SLA method.
 
@@ -34,7 +34,7 @@ More experimental results can be found in [our main paper](https://arxiv.org/abs
 
 
 <a name="python"></a>
-## Setting up Python Environment 
+## Setting up Python Environment
 
 Use conda to create a new environment by running the following command:
 
@@ -51,7 +51,7 @@ The requirements file specifies PyTorch version 2.0. Emprically it has shown to 
 However, the code does not use any PyTorch 2.0 features and should be compatible with older versions of PyTorch, such as version 1.12.0.
 
 <a name="data"></a>
-## Data Preparation 
+## Data Preparation
 
 ### Supported Datasets
 
@@ -103,13 +103,13 @@ Replace <DATASET> with the name of the dataset you want to prepare (e.g. DomainN
 After running the data preparation script, you should be able to use the resulting data files in this repository.
 
 <a name="wandb"></a>
-## Setting up Wandb 
+## Setting up Wandb
 
 We use Wandb to record our experimental results. Check [here](https://wandb.ai) for more details. The code will prompt you to login to your Wandb account.
 
 <a name="run"></a>
 ## Running the model
-    
+
 ### Baseline methods
 
 To run the main Python file, use the following command:
@@ -117,7 +117,7 @@ To run the main Python file, use the following command:
 ```sh
 python main.py --method mme --dataset OfficeHome --source 0 --target 1 --seed 1102 --num_iters 10000 --shot 3shot
 ```
-    
+
 This command runs the MME model on the 3-shot A -> C Office-Home dataset, with the specified hyperparameters. You can modify the command to run different experiments with different hyperparameters or on different datasets.
 
 The following methods are currently supported:
@@ -150,7 +150,7 @@ If you find our work useful, please cite it using the following BibTeX entry:
 ```
 
 <a name="acknowledgement"></a>
-## Acknowledgement 
+## Acknowledgement
 
 This code is partially based on [MME](https://github.com/VisionLearningGroup/SSDA_MME), [CDAC](https://github.com/lijichang/CVPR2021-SSDA) and [DeepDA](https://github.com/jindongwang/transferlearning/tree/master/code/DeepDA).
 
