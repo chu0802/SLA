@@ -16,7 +16,7 @@ The official Pytorch implementation of "Semi-Supervised Domain Adaptation with S
 
 In this work, we present a general framework, Source Label Adaptation (SLA) for Semi-Supervised Domain Adaptation. We introduce a novel source-adaptive paradigm that adapts the source data to match the target data. Our key idea is to view the source data as a noisily-labeled version of the ideal target data. Since the paradigm is very different from the core ideas behind existing SSDA approaches, our proposed model can be easily coupled with the current state-of-the-art SSDA methods and further improve their performance. The illustration of the framework is shown below.
 
-![](./imgs/intro.png)
+![](./demo/imgs/homepage_demo/intro.png)
 
 <a name="demo"></a>
 ## Demo
