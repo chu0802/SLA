@@ -1,8 +1,8 @@
-config:
-    default: ./config.yaml
 device:
-    default: 4
+    type: str
+    default: '4'
 method:
+    type: str
     default: base_SLA
     choices:
         - base
@@ -12,44 +12,62 @@ method:
         - cdac
         - cdac_SLA
 dataset:
+    type: str
     default: OfficeHome
 source:
+    type: int
     default: 0
 target:
+    type: int
     default: 1
 seed:
+    type: int
     default: 19980802
 bsize:
+    type: int
     default: 24
 num_iters:
+    type: int
     default: 10000
 shot:
+    type: str
     default: 3shot
     choices:
         - 1shot
         - 3shot
 alpha:
+    type: float
     default: 0.3
 eval_interval:
+    type: int
     default: 500
 log_interval:
+    type: int
     default: 100
 update_interval:
+    type: int
     default: 500
 early:
+    type: int
     default: 0
 warmup:
+    type: int
     default: 2000
 dataset_cfg:
-    default: data_preparation/dataset.yaml
     type: load_yaml
+    default: data_preparation/dataset.yaml
 lr:
+    type: float
     default: 0.01
 momentum:
+    type: float
     default: 0.9
 weight_decay:
+    type: float
     default: 0.0005
 T:
+    type: float
     default: 0.6
 note:
+    type: str
     default: ''

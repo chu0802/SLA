@@ -48,8 +48,7 @@ def main(args):
 
 
 if __name__ == "__main__":
-    args = arguments_parsing("arguments.yaml")
+    args = arguments_parsing("config.yaml")
     # replace the configuration
     args.dataset = args.dataset_cfg["dataset_cfg"][args.dataset]
-
     main(args)

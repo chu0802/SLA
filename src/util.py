@@ -30,7 +30,7 @@ def arguments_parsing(path):
 
     for name, argument in arguments.items():
         argument["type"] = (
-            {**globals(), **__builtins__.__dict__}.get(argument["type"], None)
+            {**globals(), **__builtins__}.get(argument["type"], None)
             if "type" in argument
             else None
         )
