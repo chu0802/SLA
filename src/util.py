@@ -1,9 +1,12 @@
 import inspect
 import random
+from ast import literal_eval
 from dataclasses import dataclass
 
+import configargparse
 import numpy as np
 import torch
+import yaml
 
 import wandb
 
@@ -13,6 +16,27 @@ TIMING_TABLE = {
     "min": 1 / 60,
     "hour": 1 / 3600,
 }
+
+
+def arguments_parsing(path):
+    p = configargparse.ArgumentParser(
+        config_file_parser_class=configargparse.YAMLConfigFileParser
+    )
+
+    with open(path, "r") as f:
+        arguments = yaml.safe_load(f)
+
+    for name, argument in arguments.items():
+        if name == "config":
+            p.add("--config", is_config_file=True, **argument)
+        else:
+            argument["type"] = (
+                getattr(__builtins__, argument["type"], literal_eval)
+                if "type" in argument
+                else None
+            )
+            p.add(f"--{name}", **argument)
+    return p.parse_args()
 
 
 def set_seed(seed):
