@@ -1,0 +1,54 @@
+config:
+    default: ./config.yaml
+device:
+    default: 4
+method:
+    default: base_SLA
+    choices:
+        - base
+        - base_SLA
+        - mme
+        - mme_SLA
+        - cdac
+        - cdac_SLA
+dataset:
+    default: OfficeHome
+source:
+    default: 0
+target:
+    default: 1
+seed:
+    default: 19980802
+bsize:
+    default: 24
+num_iters:
+    default: 10000
+shot:
+    default: 3shot
+    choices:
+        - 1shot
+        - 3shot
+alpha:
+    default: 0.3
+eval_interval:
+    default: 500
+log_interval:
+    default: 100
+update_interval:
+    default: 500
+early:
+    default: 0
+warmup:
+    default: 2000
+dataset_cfg:
+    type: literal_eval
+lr:
+    default: 0.01
+momentum:
+    default: 0.9
+weight_decay:
+    default: 0.0005
+T:
+    default: 0.6
+note:
+    default: ''
