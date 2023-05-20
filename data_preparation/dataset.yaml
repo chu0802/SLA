@@ -2,6 +2,10 @@ dataset_dir: /tmp2/chu0802/data
 text_url: https://raw.githubusercontent.com/VisionLearningGroup/SSDA_MME/master/data/txt/
 dataset_cfg:
     OfficeHome:
+        name: OfficeHome
+        path: /tmp2/chu0802/data/OfficeHome
+        text_path: /tmp2/chu0802/data/OfficeHome/text
+        num_classes: 65
         url: https://wjdcloud.blob.core.windows.net/dataset/OfficeHome.zip
         domains:
             - Art
@@ -9,6 +13,10 @@ dataset_cfg:
             - Product
             - Real
     DomainNet:
+        name: DomainNet
+        path: /tmp2/chu0802/data/DomainNet
+        text_path: /tmp2/chu0802/data/DomainNet/text
+        num_classes: 126
         url: http://csr.bu.edu/ftp/visda/2019/multi-source
         domains:
             - clipart
@@ -16,6 +24,10 @@ dataset_cfg:
             - real
             - sketch
     Office31:
+        name: Office31
+        path: /tmp2/chu0802/data/Office31
+        text_path: /tmp2/chu0802/data/Office31/text
+        num_classes: 31
         url: test
         domains:
             - amazon
