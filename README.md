@@ -1,5 +1,16 @@
+<div align="center">
+
 # Source Label Adaptation
-The official Pytorch implementation of "Semi-Supervised Domain Adaptation with Source Label Adaptation" accepted to CVPR 2023. Check more details of this work in our paper: [[Arxiv]](https://arxiv.org/abs/2302.02335).
+
+The official Pytorch implementation of "Semi-Supervised Domain Adaptation with Source Label Adaptation" accepted to CVPR 2023.
+  
+[![PWC](https://img.shields.io/badge/arXiv-2302.02335-fed000.svg)](https://arxiv.org/abs/2302.02335)
+[![PWC](https://img.shields.io/badge/CVPR%202023-PDF-informational)](https://openaccess.thecvf.com/content/CVPR2023/papers/Yu_Semi-Supervised_Domain_Adaptation_With_Source_Label_Adaptation_CVPR_2023_paper.pdf)
+[![PWC](https://img.shields.io/badge/CVPR%202023-Supp-informational)](https://openaccess.thecvf.com/content/CVPR2023/supplemental/Yu_Semi-Supervised_Domain_Adaptation_CVPR_2023_supplemental.pdf)
+[![PWC](https://img.shields.io/badge/CVPR%202023-Bibtex-informational)]($citation)
+
+</div>
+
 
 ## Table of Contents
 - [Introduction](#intro)
