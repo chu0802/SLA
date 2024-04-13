@@ -36,7 +36,12 @@ def download_OfficeHome(args):
 def download_DomainNet(args):
     for domain in args.domains:
         file_path = args.dataset_dir / f"{domain}.zip"
-        url = f"{args.url}/{domain}.zip"
+
+        # reference: http://ai.bu.edu/M3SDA/
+        if domain in ["clipart", "painting"]:
+            url = f"{args.url}/groundtruth/{domain}.zip"
+        else:
+            url = f"{args.url}/{domain}.zip"
 
         download(url, file_path)
 
