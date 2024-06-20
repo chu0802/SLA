@@ -1,0 +1,16 @@
+configargparse==1.5.3
+pyyaml==6
+pillow==9.4.0
+wandb
+tqdm
+
+
+scipy>=1.7
+markdown>=2.6.8
+werkzeug>=1.0.1
+h5py>=2.9.0
+six>=1.12.0
+wrapt<1.15,>=1.11.0
+numpy<1.24,>=1.22
+pyasn1-modules>=0.2.1
+typing-extensions>=3.6.6
