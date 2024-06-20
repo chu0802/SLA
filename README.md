@@ -51,17 +51,11 @@ More experimental results can be found in [our main paper](https://arxiv.org/abs
 <a name="python"></a>
 ## Setting up Python Environment
 
-Use conda to create a new environment by running the following command:
-
-```sh
-conda env create --name <env_name> --file environment.yaml
-```
-
-Replace <env_name> with the desired name of your new environment. This command will create a new environment with Python version 3.10.10 and install all the required packages specified in the environment.yaml file.
+Following the instructions provided [here](https://github.com/chu0802/SLA/issues/13#issuecomment-2021814501) to install all necessary packages used in this code base.
 
 ### Compatible PyTorch version
 
-The environment file specifies PyTorch version 2.0. Emprically it has shown to speed up the training progress.
+We test this project with PyTorch version 2.0. Emprically it has shown to speed up the training progress.
 
 However, the code does not use any PyTorch 2.0 features and should be compatible with older versions of PyTorch, such as version 1.12.0.
 
